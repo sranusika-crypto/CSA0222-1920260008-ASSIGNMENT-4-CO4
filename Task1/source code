@@ -1,1 +1,34 @@
+#include <stdio.h>
+#include <string.h>
 
+struct Date {
+    int day;
+    int month;
+    int year;
+};
+
+struct BloodPressure {
+    int systolic;
+    int diastolic;
+};
+
+struct Patient {
+    char name[20];
+    int age;
+    char phone[10];
+    struct BloodPressure bp;
+    struct Date visitDate;
+};
+
+#define MAX_PATIENTS 100
+struct Patient patients[MAX_PATIENTS];
+int count = 0;
+
+void addPatient(struct Patient *p) {
+    if (count < MAX_PATIENTS) {
+        patients[count] = *p;
+        count++;
+    } else {
+        printf("Patient register is full!\n");
+    }
+}
