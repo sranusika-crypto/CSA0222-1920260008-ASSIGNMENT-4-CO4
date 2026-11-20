@@ -1,1 +1,67 @@
+#include <stdio.h>
+#include <string.h>
 
+enum ItemType { PACKAGED, COOKED, COMBO };
+
+struct Date {
+    int day;
+    int month;
+    int year;
+};
+
+struct Item {
+    int id;
+    char name[30];
+    float price;
+    int stock;
+    enum ItemType type;
+    struct Date expiryDate;
+    int prepTime;
+};
+
+void printItem(const struct Item *item) {
+    printf("ID: %d | Name: %s | Price: ₹%.2f | Stock: %d\n", 
+           item->id, item->name, item->price, item->stock);
+}
+
+int checkExpiry(struct Date current, struct Date expiry) {
+    if (expiry.year == current.year && expiry.month == current.month) {
+        if (expiry.day - current.day <= 2 && expiry.day >= current.day) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+void recordSale(struct Item *item, int qty) {
+    if (item->stock >= qty) {
+        item->stock -= qty;
+        printf("Sale recorded successfully for %s! Total: ₹%.2f\n", item->name, item->price * qty);
+    } else {
+        printf("Error: Stock exceeded for %s! Available: %d\n", item->name, item->stock);
+    }
+}
+
+int main(void) {
+    struct Item inventory[3] = {
+        {1, "Chips", 20.0f, 50, PACKAGED, {14, 10, 2026}, 0},
+        {2, "Samosa", 15.0f, 5, COOKED, {12, 10, 2026}, 11},
+        {3, "Meal Combo", 80.0f, 10, COMBO, {12, 10, 2026}, 13}
+    };
+
+    struct Date today = {12, 10, 2026};
+
+    printf("--- Canteen Inventory System ---\n");
+    for (int i = 0; i < 3; i++) {
+        printItem(&inventory[i]);
+        if (inventory[i].type == PACKAGED && checkExpiry(today, inventory[i].expiryDate)) {
+            printf("WARNING: Item %s is expiring within 2 days!\n", inventory[i].name);
+        }
+    }
+
+    printf("\n--- Simulating Sales ---\n");
+    recordSale(&inventory[0], 5);
+    recordSale(&inventory[1], 10);
+
+    return 0;
+}
